@@ -37,7 +37,7 @@ class GrassFactory : public fpmas::api::model::GridCellFactory<Grass> {
 		}
 };
 
-PreyPredatorModel::PreyPredatorModel(const YAML::Node& config) {
+void PreyPredatorModel::initModel(const YAML::Node& config) {
 
 	int grid_width = config["Grid"]["width"].as<int>();
 	int grid_height = config["Grid"]["height"].as<int>();
@@ -46,7 +46,7 @@ PreyPredatorModel::PreyPredatorModel(const YAML::Node& config) {
 
 	auto& grow_group = this->buildGroup(GROW, grow);
 	GrassFactory grass_factory(config["Grass"]["init_rate"].as<float>());
-	fpmas::model::VonNeumannGridBuilder<Grass> grid(
+	GridType::Builder grid(
 			grass_factory, grid_width, grid_height
 			);
 
@@ -82,8 +82,17 @@ PreyPredatorModel::PreyPredatorModel(const YAML::Node& config) {
 
 	this->scheduler().schedule(0.0, 1, grow_group.jobs());
 	this->scheduler().schedule(0.1, 1, move_group.jobs());
+	this->scheduler().schedule(0.15, 1, this->loadBalancingJob());
 	this->scheduler().schedule(0.2, 1, eat_group.jobs());
 	this->scheduler().schedule(0.3, 1, die_group.jobs());
 	this->scheduler().schedule(0.4, 1, reproduce_group.jobs());
-	this->scheduler().schedule(0.5, 10, this->loadBalancingJob());
 }
+
+PreyPredatorModel::PreyPredatorModel(const YAML::Node& config) {
+	this->initModel(config);
+}
+
+PreyPredatorModel::PreyPredatorModel(const YAML::Node& config, fpmas::api::graph::LoadBalancing<fpmas::api::model::AgentPtr>& lb)
+	: fpmas::model::GridModel<fpmas::synchro::GhostMode, Grass>(lb) {
+		this->initModel(config);
+	}

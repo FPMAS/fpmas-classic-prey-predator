@@ -19,8 +19,11 @@ class PreyPredatorModel : public fpmas::model::GridModel<fpmas::synchro::GhostMo
 		Behavior<PreyPredatorAgentBase> reproduce {&PreyPredatorAgentBase::reproduce};
 
 		static void load_static_config(const YAML::Node& config);
+		void initModel(const YAML::Node& config);
+
 	public:
 		PreyPredatorModel(const YAML::Node& config);
+		PreyPredatorModel(const YAML::Node& config, fpmas::api::graph::LoadBalancing<fpmas::api::model::AgentPtr>& lb);
 
 };
 #endif

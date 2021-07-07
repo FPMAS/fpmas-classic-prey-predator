@@ -3,8 +3,8 @@
 
 fpmas::random::UniformRealDistribution<> PreyPredatorAgentBase::random_real(0, 1);
 
-const MooreRange<VonNeumannGrid<Grass>> PreyPredatorAgentBase::mobility_range(1);
-const MooreRange<VonNeumannGrid<Grass>> PreyPredatorAgentBase::perception_range(0);
+const MooreRange<GridType> PreyPredatorAgentBase::mobility_range(1);
+const MooreRange<GridType> PreyPredatorAgentBase::perception_range(0);
 
 void PreyPredatorAgentBase::move() {
 	this->energy -= move_cost;

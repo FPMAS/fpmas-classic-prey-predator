@@ -11,6 +11,7 @@ set(CMAKE_CXX_FLAGS_DEBUG
 set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall")
 
 set(PP_LOG "false" CACHE STRING "Enables debug log (true/false)")
+set(GRID_TYPE "VonNeumannGrid" CACHE STRING "Grid Type (VonNeumannGrid/MooreGrid)")
 
 add_executable(fpmas-classic-pp
 	src/main.cpp
@@ -23,6 +24,9 @@ add_executable(fpmas-classic-pp
 
 message(STATUS "Debug log:  ${PP_LOG}")
 target_compile_definitions(fpmas-classic-pp PUBLIC PP_LOG=${PP_LOG})
+message(STATUS "Grid Type: ${GRID_TYPE}")
+target_compile_definitions(fpmas-classic-pp PUBLIC GRID_TYPE=${GRID_TYPE})
+
 target_include_directories(fpmas-classic-pp PUBLIC include)
 
 target_link_libraries(fpmas-classic-pp fpmas::fpmas yaml-cpp::yaml-cpp)

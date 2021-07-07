@@ -17,7 +17,7 @@ class Grass : public GridCellBase<Grass> {
 		Grass() : _countdown(growing_rate), _grown(true) {}
 
 		Grass(int countdown, bool grown, DiscretePoint location)
-			:GridCellBase<Grass>(location), _countdown(countdown), _grown(grown)  {
+			: GridCellBase<Grass>(location), _countdown(countdown), _grown(grown)  {
 			}
 
 		bool isGrown() const {

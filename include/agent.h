@@ -3,6 +3,7 @@
 
 #include "grass.h"
 #include "fpmas/model/spatial/moore.h"
+#include "config.h"
 
 class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass> {
 	private:
@@ -12,8 +13,8 @@ class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass>
 		float reproduction_rate;
 
 	protected:
-		static const MooreRange<VonNeumannGrid<Grass>> mobility_range;
-		static const MooreRange<VonNeumannGrid<Grass>> perception_range;
+		static const MooreRange<GridType> mobility_range;
+		static const MooreRange<GridType> perception_range;
 
 		int energy;
 		bool alive;
