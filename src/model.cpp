@@ -54,7 +54,7 @@ void PreyPredatorModel::initModel(const YAML::Node& config) {
 
 	auto& move_group = this->buildMoveGroup(MOVE, move);
 	auto& eat_group = this->buildGroup(EAT, eat);
-	auto& die_group = this->buildMoveGroup(DIE, die);
+	auto& die_group = this->buildGroup(DIE, die);
 	auto& reproduce_group = this->buildMoveGroup(REPRODUCE, reproduce);
 
 	GridAgentBuilder<Grass> agent_builder;
