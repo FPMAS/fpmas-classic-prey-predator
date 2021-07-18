@@ -1,39 +1,26 @@
 num_steps: 50
+sync_mode: GHOST_MODE
 
 Grid:
     width: 100
     height: 100
 
-#ModelConfig:
-    #mode: CLASSIC
-    #num_steps: 50
-    #model_output_file: model.csv
-    #graph_output_file: graph.%r.csv
-
-#LoadBalancing:
-    #enable: true
-    #period: 20
-
-Breakpoint:
-    load_from: ""
-    enable: false
-    file: breakpoint.%r.bin
-    start: 0
-    period: 10
-
 Prey:
-    count: 50
+    count: 250
     initial_energy: 4
     move_cost: 1
     energy_gain: 4
     reproduction_rate: 0.05
+    mobility_range_size: 1
 
 Predator:
-    count: 20
+    count: 170
     initial_energy: 20
     move_cost: 1
     energy_gain: 20
     reproduction_rate: 0.04
+    perception_range_size: 1
+    mobility_range_size: 1
 
 Grass:
     init_rate: 0.5

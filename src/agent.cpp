@@ -3,8 +3,7 @@
 
 fpmas::random::UniformRealDistribution<> PreyPredatorAgentBase::random_real(0, 1);
 
-const MooreRange<GridType> PreyPredatorAgentBase::mobility_range(1);
-const MooreRange<GridType> PreyPredatorAgentBase::perception_range(0);
+std::size_t distant_eat_prey = 0;
 
 void PreyPredatorAgentBase::move() {
 	this->energy -= move_cost;
@@ -58,6 +57,8 @@ int Prey::init_energy = 4;
 int Prey::energy_gain = 4;
 int Prey::move_cost = 1;
 float Prey::reproduction_rate = 0.05;
+int Prey::mobility_range_size = 1;
+const int Prey::perception_range_size = -1;
 
 void Prey::eat() {
 	AcquireGuard acq(this->locationCell());
@@ -79,6 +80,8 @@ int Predator::init_energy = 20;
 int Predator::energy_gain = 20;
 int Predator::move_cost = 1;
 float Predator::reproduction_rate = 0.04;
+int Predator::mobility_range_size = 1;
+int Predator::perception_range_size = 0;
 
 void Predator::eat() {
 	auto preys = this->perceptions<Prey>();
@@ -92,6 +95,8 @@ void Predator::eat() {
 				<< this->node()->getId() << " eats " << prey->node()->getId()
 				<< std::endl;
 #endif
+			if(prey->node()->state() == fpmas::api::graph::DISTANT)
+				distant_eat_prey++;
 
 			prey->kill();
 			this->energy+=Predator::energy_gain;

@@ -9,7 +9,7 @@
 
 FPMAS_DEFINE_GROUPS(GROW, MOVE, EAT, DIE, REPRODUCE);
 
-class PreyPredatorModel : public fpmas::model::GridModel<fpmas::synchro::GhostMode, Grass> {
+class PreyPredatorModelBase : public virtual fpmas::api::model::SpatialModel<Grass> {
 	private:
 		// Behaviors must be declared at the class level
 		Behavior<Grass> grow {&Grass::grow};
@@ -19,11 +19,26 @@ class PreyPredatorModel : public fpmas::model::GridModel<fpmas::synchro::GhostMo
 		Behavior<PreyPredatorAgentBase> reproduce {&PreyPredatorAgentBase::reproduce};
 
 		static void load_static_config(const YAML::Node& config);
+
+	protected:
 		void initModel(const YAML::Node& config);
 
+};
+
+template<template<typename> class SyncMode>
+class PreyPredatorModel :
+	public PreyPredatorModelBase,
+	public fpmas::model::GridModel<SyncMode, Grass> {
 	public:
-		PreyPredatorModel(const YAML::Node& config);
-		PreyPredatorModel(const YAML::Node& config, fpmas::api::graph::LoadBalancing<fpmas::api::model::AgentPtr>& lb);
+		PreyPredatorModel(const YAML::Node& config) {
+			this->initModel(config);
+		}
+		PreyPredatorModel(
+				const YAML::Node& config,
+				fpmas::api::graph::LoadBalancing<fpmas::api::model::AgentPtr>& lb
+				) : fpmas::model::GridModel<SyncMode, Grass>(lb) {
+		this->initModel(config);
+	}
 
 };
 #endif

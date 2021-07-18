@@ -5,6 +5,8 @@
 #include "fpmas/model/spatial/moore.h"
 #include "config.h"
 
+extern std::size_t distant_eat_prey;
+
 class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass> {
 	private:
 		static fpmas::random::UniformRealDistribution<> random_real;
@@ -13,8 +15,8 @@ class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass>
 		float reproduction_rate;
 
 	protected:
-		static const MooreRange<GridType> mobility_range;
-		static const MooreRange<GridType> perception_range;
+		MooreRange<GridType> mobility_range;
+		MooreRange<GridType> perception_range;
 
 		int energy;
 		bool alive;
@@ -25,10 +27,16 @@ class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass>
 	public:
 		PreyPredatorAgentBase(
 				int move_cost, float reproduction_rate,
+				int mobility_range_size, int perception_range_size,
 				int energy, bool alive) :
 			move_cost(move_cost), reproduction_rate(reproduction_rate),
+			mobility_range(mobility_range_size),
+			perception_range(perception_range_size),
 			energy(energy), alive(alive) {
 			}
+
+		FPMAS_MOBILITY_RANGE(mobility_range);
+		FPMAS_PERCEPTION_RANGE(perception_range);
 
 		int getEnergy() const {return energy;}
 
@@ -52,12 +60,10 @@ class PreyPredatorAgent : public PreyPredatorAgentBase, public GridAgent<AgentTy
 
 		PreyPredatorAgent(int energy, bool alive) :
 			PreyPredatorAgentBase(
-					AgentType::move_cost, AgentType::reproduction_rate, energy, alive
-					),
-			fpmas::model::GridAgent<AgentType, Grass>(
-				PreyPredatorAgentBase::mobility_range,
-				PreyPredatorAgentBase::perception_range
-				) {
+					AgentType::move_cost, AgentType::reproduction_rate,
+					AgentType::mobility_range_size, AgentType::perception_range_size,
+					energy, alive
+					) {
 		}
 
 		Neighbors<Grass> reachableCells() const override {
@@ -84,6 +90,8 @@ class Prey : public PreyPredatorAgent<Prey> {
 		static int energy_gain;
 		static int move_cost;
 		static float reproduction_rate;
+		static int mobility_range_size;
+		static const int perception_range_size;
 
 		using PreyPredatorAgent<Prey>::PreyPredatorAgent;
 
@@ -96,6 +104,8 @@ class Predator : public PreyPredatorAgent<Predator> {
 		static int energy_gain;
 		static int move_cost;
 		static float reproduction_rate;
+		static int mobility_range_size;
+		static int perception_range_size;
 
 		using PreyPredatorAgent<Predator>::PreyPredatorAgent;
 

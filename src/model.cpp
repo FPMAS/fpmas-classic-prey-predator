@@ -2,16 +2,20 @@
 #include "config.h"
 #include "fpmas/model/spatial/grid_agent_mapping.h"
 
-void PreyPredatorModel::load_static_config(const YAML::Node& config) {
-	Prey::init_energy = config["Prey"]["init_energy"].as<int>();
+void PreyPredatorModelBase::load_static_config(const YAML::Node& config) {
+	Prey::init_energy = config["Prey"]["initial_energy"].as<int>();
 	Prey::move_cost = config["Prey"]["move_cost"].as<int>();
 	Prey::energy_gain = config["Prey"]["energy_gain"].as<int>();
 	Prey::reproduction_rate = config["Prey"]["reproduction_rate"].as<float>();
+	Prey::mobility_range_size = config["Prey"]["mobility_range_size"].as<int>();
 
-	Predator::init_energy = config["Predator"]["init_energy"].as<int>();
+	Predator::init_energy = config["Predator"]["initial_energy"].as<int>();
 	Predator::move_cost = config["Predator"]["move_cost"].as<int>();
 	Predator::energy_gain = config["Predator"]["energy_gain"].as<int>();
 	Predator::reproduction_rate = config["Predator"]["reproduction_rate"].as<float>();
+	Predator::perception_range_size = config["Predator"]["perception_range_size"].as<int>();
+	std::cout << Predator::perception_range_size << std::endl;
+	Predator::mobility_range_size = config["Predator"]["mobility_range_size"].as<int>();
 	
 	Grass::growing_rate = config["Grass"]["growing_rate"].as<int>();
 }
@@ -37,7 +41,8 @@ class GrassFactory : public fpmas::api::model::GridCellFactory<Grass> {
 		}
 };
 
-void PreyPredatorModel::initModel(const YAML::Node& config) {
+void PreyPredatorModelBase::initModel(const YAML::Node& config) {
+	load_static_config(config);
 
 	int grid_width = config["Grid"]["width"].as<int>();
 	int grid_height = config["Grid"]["height"].as<int>();
@@ -87,12 +92,3 @@ void PreyPredatorModel::initModel(const YAML::Node& config) {
 	this->scheduler().schedule(0.3, 1, die_group.jobs());
 	this->scheduler().schedule(0.4, 1, reproduce_group.jobs());
 }
-
-PreyPredatorModel::PreyPredatorModel(const YAML::Node& config) {
-	this->initModel(config);
-}
-
-PreyPredatorModel::PreyPredatorModel(const YAML::Node& config, fpmas::api::graph::LoadBalancing<fpmas::api::model::AgentPtr>& lb)
-	: fpmas::model::GridModel<fpmas::synchro::GhostMode, Grass>(lb) {
-		this->initModel(config);
-	}
