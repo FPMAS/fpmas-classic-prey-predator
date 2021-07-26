@@ -3,8 +3,6 @@
 
 fpmas::random::UniformRealDistribution<> PreyPredatorAgentBase::random_real(0, 1);
 
-std::size_t distant_eat_prey = 0;
-
 void PreyPredatorAgentBase::move() {
 	this->energy -= move_cost;
 	Grass* new_location = this->reachableCells().random();
@@ -21,7 +19,6 @@ void PreyPredatorAgentBase::move() {
 
 void PreyPredatorAgentBase::reproduce() {
 	if(this->random_real(rd) <= reproduction_rate) {
-		//std::cout << this->node()->getId() << " reproduces" << std::endl;
 		this->energy /= 2;
 		PreyPredatorAgentBase* child = this->buildChild(this->energy);
 		for(auto group : this->groups())
@@ -95,8 +92,6 @@ void Predator::eat() {
 				<< this->node()->getId() << " eats " << prey->node()->getId()
 				<< std::endl;
 #endif
-			if(prey->node()->state() == fpmas::api::graph::DISTANT)
-				distant_eat_prey++;
 
 			prey->kill();
 			this->energy+=Predator::energy_gain;

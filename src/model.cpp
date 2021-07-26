@@ -14,7 +14,6 @@ void PreyPredatorModelBase::load_static_config(const YAML::Node& config) {
 	Predator::energy_gain = config["Predator"]["energy_gain"].as<int>();
 	Predator::reproduction_rate = config["Predator"]["reproduction_rate"].as<float>();
 	Predator::perception_range_size = config["Predator"]["perception_range_size"].as<int>();
-	std::cout << Predator::perception_range_size << std::endl;
 	Predator::mobility_range_size = config["Predator"]["mobility_range_size"].as<int>();
 	
 	Grass::growing_rate = config["Grass"]["growing_rate"].as<int>();

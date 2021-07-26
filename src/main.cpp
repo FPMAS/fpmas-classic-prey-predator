@@ -16,8 +16,6 @@ void run_model(
 				);
 
 		model.runtime().run(stop_at);
-
-		std::cout << distant_eat_prey << std::endl;
 }
 
 int main(int argc, char** argv) {

@@ -5,8 +5,6 @@
 #include "fpmas/model/spatial/moore.h"
 #include "config.h"
 
-extern std::size_t distant_eat_prey;
-
 class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass> {
 	private:
 		static fpmas::random::UniformRealDistribution<> random_real;
