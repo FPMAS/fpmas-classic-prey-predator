@@ -1,5 +1,6 @@
 num_steps: 50
 sync_mode: GHOST_MODE
+lb_output: false
 
 Grid:
     width: 100
