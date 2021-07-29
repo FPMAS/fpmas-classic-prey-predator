@@ -15,20 +15,19 @@ void run_model(
 	model.scheduler().schedule(
 			fpmas::api::scheduler::sub_step_end(0), 1, model_output.job()
 			);
-
-	// Optional load balancint stats outputs
-
-	// A file by process with local workload and communications
-	fpmas::io::FileOutput lb_file(
-			"lb.%r.csv", model.getMpiCommunicator().getRank()
-			);
-	LoadBalancingOutput lb_output(model, lb_file);
-
-	// A single file with total workload and communications
-	fpmas::io::FileOutput total_lb_file("total_lb.csv");
-	TotalLoadBalancingOutput total_lb_output(model, total_lb_file);
-
 	if(enable_lb_output) {
+		// Optional load balancint stats outputs
+
+		// A file by process with local workload and communications
+		fpmas::io::FileOutput lb_file(
+				"lb.%r.csv", model.getMpiCommunicator().getRank()
+				);
+		LoadBalancingOutput lb_output(model, lb_file);
+
+		// A single file with total workload and communications
+		fpmas::io::FileOutput total_lb_file("total_lb.csv");
+		TotalLoadBalancingOutput total_lb_output(model, total_lb_file);
+
 		model.scheduler().schedule(
 				fpmas::api::scheduler::sub_step_end(0), 1, lb_output.job()
 				);
@@ -36,10 +35,13 @@ void run_model(
 		model.scheduler().schedule(
 				fpmas::api::scheduler::sub_step_end(0), 1, total_lb_output.job()
 				);
-	}
 
-	// Runs the model
-	model.runtime().run(stop_at);
+		// Runs the model
+		model.runtime().run(stop_at);
+	} else {
+		// Just runs the model without creating useless files
+		model.runtime().run(stop_at);
+	}
 }
 
 int main(int argc, char** argv) {
