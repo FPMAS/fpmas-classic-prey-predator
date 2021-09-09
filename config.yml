@@ -1,6 +1,8 @@
 num_steps: 50
 sync_mode: GHOST_MODE
 lb_output: false
+# GRID_LB, ZOLTAN_LB, SCHEDULED_LB, ZOLTAN_CELL_LB
+lb_method: GRID_LB
 
 Grid:
     width: 100

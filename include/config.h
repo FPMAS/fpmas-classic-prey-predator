@@ -23,6 +23,10 @@ enum SyncMode {
 	GHOST_MODE, HARD_SYNC_MODE
 };
 
+enum LbMethod {
+	ZOLTAN_LB, SCHEDULED_LB, ZOLTAN_CELL_LB, GRID_LB
+};
+
 namespace YAML {
 	template<>
 		struct convert<SyncMode> {
@@ -44,6 +48,42 @@ namespace YAML {
 					sync_mode = GHOST_MODE;
 				else if(node.as<std::string>() == "HARD_SYNC_MODE")
 					sync_mode = HARD_SYNC_MODE;
+				else
+					return false;
+				return true;
+			}
+		};
+
+	template<>
+		struct convert<LbMethod> {
+			static Node encode(const LbMethod& lb_method) {
+				Node node;
+				switch(lb_method) {
+					case ZOLTAN_LB:
+						node = "ZOLTAN_LB";
+						break;
+					case SCHEDULED_LB:
+						node = "SCHEDULED_LB";
+						break;
+					case ZOLTAN_CELL_LB:
+						node = "ZOLTAN_CELL_LB";
+						break;
+					case GRID_LB:
+						node = "GRID_LB";
+						break;
+				}
+				return node;
+			}
+
+			static bool decode(const Node& node, LbMethod& lb_method) {
+				if(node.as<std::string>() == "ZOLTAN_LB")
+					lb_method = ZOLTAN_LB;
+				else if(node.as<std::string>() == "SCHEDULED_LB")
+					lb_method = SCHEDULED_LB;
+				else if(node.as<std::string>() == "ZOLTAN_CELL_LB")
+					lb_method = ZOLTAN_CELL_LB;
+				else if(node.as<std::string>() == "GRID_LB")
+					lb_method = GRID_LB;
 				else
 					return false;
 				return true;

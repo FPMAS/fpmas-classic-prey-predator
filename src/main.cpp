@@ -55,23 +55,53 @@ int main(int argc, char** argv) {
 		SyncMode sync_mode = config["sync_mode"].as<SyncMode>();
 		bool enable_lb_output = config["lb_output"].as<bool>();
 
+		fpmas::scheduler::Scheduler scheduler;
+		fpmas::runtime::Runtime runtime(scheduler);
+
+		// Builds all possible LoadBalancing algorithms
 		fpmas::model::GridLoadBalancing grid_lb(
 				grid_width, grid_height,
 				fpmas::communication::WORLD
 				);
+		fpmas::model::ZoltanLoadBalancing zoltan_lb(fpmas::communication::WORLD);
+		fpmas::model::ScheduledLoadBalancing scheduled_lb(zoltan_lb, scheduler, runtime);
+		fpmas::model::CellLoadBalancing zoltan_cell_lb(fpmas::communication::WORLD, zoltan_lb);
+
+		// Selected LB
+		fpmas::api::model::LoadBalancing* load_balancing;
+
+		// Selects LB algorithm
+		switch(config["lb_method"].as<LbMethod>()) {
+			case ZOLTAN_LB:
+				load_balancing = &zoltan_lb;
+				break;
+			case SCHEDULED_LB:
+				load_balancing = &scheduled_lb;
+				break;
+			case ZOLTAN_CELL_LB:
+				load_balancing = &zoltan_cell_lb;
+				break;
+			case GRID_LB:
+				load_balancing = &grid_lb;
+				break;
+		}
 
 		fpmas::runtime::Date stop_at = config["num_steps"].as<int>();
 
 		switch(sync_mode) {
 			case GHOST_MODE:
 				{
-					PreyPredatorModel<fpmas::synchro::GhostMode> model(config, grid_lb);
+					PreyPredatorModel<fpmas::synchro::GhostMode> model(
+							config, scheduler, runtime, *load_balancing
+							);
 					run_model(model, stop_at, enable_lb_output);
 				}
 				break;
 			case HARD_SYNC_MODE:
 				{
-					PreyPredatorModel<fpmas::synchro::HardSyncMode> model(config, grid_lb);
+					PreyPredatorModel<fpmas::synchro::HardSyncMode> model(
+							config, scheduler, runtime, *load_balancing
+							);
 					run_model(model, stop_at, enable_lb_output);
 				}
 				break;

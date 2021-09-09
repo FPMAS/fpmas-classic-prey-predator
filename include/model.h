@@ -35,8 +35,10 @@ class PreyPredatorModel :
 		}
 		PreyPredatorModel(
 				const YAML::Node& config,
+				fpmas::api::scheduler::Scheduler& scheduler,
+				fpmas::api::runtime::Runtime& runtime,
 				fpmas::api::graph::LoadBalancing<fpmas::api::model::AgentPtr>& lb
-				) : fpmas::model::GridModel<SyncMode, Grass>(lb) {
+				) : fpmas::model::GridModel<SyncMode, Grass>(scheduler, runtime, lb) {
 		this->initModel(config);
 	}
 
