@@ -80,6 +80,17 @@ class PreyPredatorAgent : public PreyPredatorAgentBase, public GridAgent<AgentTy
 		static AgentType* from_json(const nlohmann::json& j) {
 			return new AgentType(j[0].get<int>(), j[1].get<bool>());
 		}
+
+		static void to_datapack(fpmas::io::datapack::ObjectPack& o, const AgentType* agent) {
+			using namespace fpmas::io::datapack;
+			o.allocate(pack_size<int>() + pack_size<bool>());
+			o.write(agent->getEnergy());
+			o.write(agent->isAlive());
+		}
+
+		static AgentType* from_datapack(const fpmas::io::datapack::ObjectPack& o) {
+			return new AgentType(o.read<int>(), o.read<bool>());
+		}
 };
 
 class Prey : public PreyPredatorAgent<Prey> {

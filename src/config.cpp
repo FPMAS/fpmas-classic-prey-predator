@@ -1,6 +1,6 @@
 #include "config.h"
 #include "agent.h"
 
-FPMAS_JSON_SET_UP(Grass::JsonBase, Prey::JsonBase, Predator::JsonBase);
+FPMAS_DATAPACK_SET_UP(Grass::JsonBase, Prey::JsonBase, Predator::JsonBase);
 
 fpmas::random::DistributedGenerator<> rd;
