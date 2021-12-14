@@ -81,15 +81,17 @@ class PreyPredatorAgent : public PreyPredatorAgentBase, public GridAgent<AgentTy
 			return new AgentType(j[0].get<int>(), j[1].get<bool>());
 		}
 
+		static std::size_t size(const fpmas::io::datapack::ObjectPack& p, const AgentType* agent) {
+			return p.size<int>() + p.size<bool>();
+		}
+
 		static void to_datapack(fpmas::io::datapack::ObjectPack& o, const AgentType* agent) {
-			using namespace fpmas::io::datapack;
-			o.allocate(pack_size<int>() + pack_size<bool>());
-			o.write(agent->getEnergy());
-			o.write(agent->isAlive());
+			o.put(agent->getEnergy());
+			o.put(agent->isAlive());
 		}
 
 		static AgentType* from_datapack(const fpmas::io::datapack::ObjectPack& o) {
-			return new AgentType(o.read<int>(), o.read<bool>());
+			return new AgentType(o.get<int>(), o.get<bool>());
 		}
 };
 

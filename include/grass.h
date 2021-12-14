@@ -38,6 +38,7 @@ class Grass : public GridCellBase<Grass> {
 		static void to_json(nlohmann::json& j, const Grass* grass);
 		static Grass* from_json(const nlohmann::json& j);
 
+		static std::size_t size(const fpmas::io::datapack::ObjectPack& p, const Grass* grass);
 		static void to_datapack(fpmas::io::datapack::ObjectPack& o, const Grass* grass);
 		static Grass* from_datapack(const fpmas::io::datapack::ObjectPack& o);
 };
