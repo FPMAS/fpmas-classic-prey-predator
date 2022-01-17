@@ -3,52 +3,6 @@
 
 fpmas::random::UniformRealDistribution<> PreyPredatorAgentBase::random_real(0, 1);
 
-void PreyPredatorAgentBase::move() {
-	this->energy -= move_cost;
-	Grass* new_location = this->reachableCells().random();
-	this->moveTo(new_location);
-
-#if PP_LOG
-	std::cout
-		<< this->model()->runtime().currentDate() << ": "
-		<< this->node()->getId() << " moves to " << new_location->location()
-		<< " " << new_location->node()->getId()
-		<< std::endl;
-#endif
-}
-
-void PreyPredatorAgentBase::reproduce() {
-	if(this->random_real(rd) <= reproduction_rate) {
-		this->energy /= 2;
-		PreyPredatorAgentBase* child = this->buildChild(this->energy);
-		for(auto group : this->groups())
-			group->add(child);
-		child->initLocation(this->locationCell());
-
-#if PP_LOG
-		std::cout
-			<< this->model()->runtime().currentDate() << ": "
-			<< "Agent " << this->node()->getId()
-			<< " reproduces at " << this->locationCell()->location() << ". "
-			<< "Child: " << child->node()->getId() << std::endl;
-#endif
-	}
-}
-
-void PreyPredatorAgentBase::die() {
-	if(this->energy <= 0)
-		kill();
-	if(!isAlive()) {
-#if PP_LOG
-		std::cout
-			<< this->model()->runtime().currentDate() << ": "
-			<< this->node()->getId() << " dies." << std::endl;
-#endif
-		auto groups = this->groups();
-		for(auto group : groups)
-			group->remove(this);
-	}
-}
 
 int Prey::init_energy = 4;
 int Prey::energy_gain = 4;

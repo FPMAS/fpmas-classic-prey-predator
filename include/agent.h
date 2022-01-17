@@ -5,22 +5,18 @@
 #include "fpmas/model/spatial/moore.h"
 #include "config.h"
 
-class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass> {
-	private:
+class PreyPredatorAgentBase {
+	protected:
 		static fpmas::random::UniformRealDistribution<> random_real;
 
 		int move_cost;
 		float reproduction_rate;
 
-	protected:
 		MooreRange<GridType> mobility_range;
 		MooreRange<GridType> perception_range;
 
 		int energy;
 		bool alive;
-
-		virtual PreyPredatorAgentBase* buildChild(int energy) const = 0;
-		virtual Neighbors<Grass> reachableCells() const = 0;
 
 	public:
 		PreyPredatorAgentBase(
@@ -33,9 +29,6 @@ class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass>
 			energy(energy), alive(alive) {
 			}
 
-		FPMAS_MOBILITY_RANGE(mobility_range);
-		FPMAS_PERCEPTION_RANGE(perception_range);
-
 		int getEnergy() const {return energy;}
 
 		void kill() {this->alive = false;}
@@ -43,9 +36,9 @@ class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass>
 
 		void update(int current_rank, int energy);
 
-		void move();
-		void reproduce();
-		void die();
+		virtual void move() = 0;
+		virtual void reproduce() = 0;
+		virtual void die() = 0;
 
 		virtual void eat() = 0;
 };
@@ -53,6 +46,9 @@ class PreyPredatorAgentBase : public virtual fpmas::api::model::GridAgent<Grass>
 template<typename AgentType>
 class PreyPredatorAgent : public PreyPredatorAgentBase, public GridAgent<AgentType, Grass> {
 	public:
+		FPMAS_MOBILITY_RANGE(mobility_range);
+		FPMAS_PERCEPTION_RANGE(perception_range);
+
 		PreyPredatorAgent() : PreyPredatorAgent(AgentType::init_energy, true) {
 		}
 
@@ -64,12 +60,59 @@ class PreyPredatorAgent : public PreyPredatorAgentBase, public GridAgent<AgentTy
 					) {
 		}
 
-		Neighbors<Grass> reachableCells() const override {
+		Neighbors<Grass> reachableCells() const {
 			return this->mobilityField();
 		}
 
-		PreyPredatorAgentBase* buildChild(int energy) const override {
+		AgentType* buildChild(int energy) const {
 			return new AgentType(energy, true);
+		}
+
+		void move() override {
+			this->energy -= move_cost;
+			Grass* new_location = this->reachableCells().random();
+			this->moveTo(new_location);
+
+#if PP_LOG
+			std::cout
+				<< this->model()->runtime().currentDate() << ": "
+				<< this->node()->getId() << " moves to " << new_location->location()
+				<< " " << new_location->node()->getId()
+				<< std::endl;
+#endif
+		}
+
+		void reproduce() override {
+			if(this->random_real(rd) <= reproduction_rate) {
+				this->energy /= 2;
+				AgentType* child = this->buildChild(this->energy);
+				for(auto group : this->groups())
+					group->add(child);
+				child->initLocation(this->locationCell());
+
+#if PP_LOG
+				std::cout
+					<< this->model()->runtime().currentDate() << ": "
+					<< "Agent " << this->node()->getId()
+					<< " reproduces at " << this->locationCell()->location() << ". "
+					<< "Child: " << child->node()->getId() << std::endl;
+#endif
+			}
+		}
+
+		void die() override {
+			if(this->energy <= 0)
+				kill();
+			if(!isAlive()) {
+#if PP_LOG
+				std::cout
+					<< this->model()->runtime().currentDate() << ": "
+					<< this->node()->getId() << " dies." << std::endl;
+#endif
+				auto groups = this->groups();
+				for(auto group : groups)
+					group->remove(this);
+			}
 		}
 
 		static void to_json(nlohmann::json& j, const AgentType* agent) {
