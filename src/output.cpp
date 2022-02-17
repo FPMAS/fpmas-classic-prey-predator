@@ -11,21 +11,21 @@ ModelOutput::ModelOutput(
 			{"grass", [&model] {
 			std::size_t num_grass = 0;
 			for(auto grass : model.getGroup(GROW).localAgents())
-				if(dynamic_cast<Grass*>(grass)->isGrown())
+				if(((Grass*) grass)->isGrown())
 					num_grass++;
 			return num_grass;
 			}},
 			{"prey", [&model] {
 			std::size_t num_prey = 0;
 			for(auto agent : model.getGroup(MOVE).localAgents())
-				if(dynamic_cast<Prey*>(agent))
+				if(agent->typeId() == Prey::TYPE_ID)
 					num_prey++;
 			return num_prey;
 			}},
 			{"predator", [&model] {
 			std::size_t num_prey = 0;
 			for(auto agent : model.getGroup(MOVE).localAgents())
-				if(dynamic_cast<Predator*>(agent))
+				if(agent->typeId() == Predator::TYPE_ID)
 					num_prey++;
 			return num_prey;
 			}})
