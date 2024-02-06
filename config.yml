@@ -1,4 +1,5 @@
 num_steps: 50
+# GHOST_MODE or HARD_SYNC_MODE
 sync_mode: GHOST_MODE
 lb_output: false
 # GRID_LB, ZOLTAN_LB, SCHEDULED_LB, ZOLTAN_CELL_LB
