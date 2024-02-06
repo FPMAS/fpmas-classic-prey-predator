@@ -99,7 +99,7 @@ int main(int argc, char** argv) {
 				break;
 			case HARD_SYNC_MODE:
 				{
-					PreyPredatorModel<fpmas::synchro::HardSyncMode> model(
+					PreyPredatorModel<fpmas::synchro::HardSyncModeWithGhostLink> model(
 							config, scheduler, runtime, *load_balancing
 							);
 					run_model(model, stop_at, enable_lb_output);
