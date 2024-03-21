@@ -28,7 +28,7 @@ Model parameters are described in the [config.yml](blob/master/config.yml) file.
 ## Run
 
 ```
-mpiexec -n <N> ./fpmas-virus <config_file>
+mpiexec -n <N> ./fpmas-prey-predator <config_file>
 ```
 - `N`: processes count
 - `config_file`: a `.yml` configuration file
