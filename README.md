@@ -13,7 +13,7 @@ be specified to `cmake` if `FPMAS` is not installed in a standard directory
 specified when building `FPMAS`).
 
 ```
-git clone https://github.com/FPMAS/fpmas-classic-prey-predator
+git clone --recurse-submodules https://github.com/FPMAS/fpmas-classic-prey-predator
 cd fpmas-classic-prey-predator
 mkdir build
 cd build
